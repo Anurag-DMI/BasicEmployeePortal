@@ -5,6 +5,7 @@ import org.learning.EmployeePortal.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -22,20 +23,20 @@ public class EmployeeRestController {
 
     // To get employee using empId
     @GetMapping("emp/{empId}")
-    public Employee getEmp(@PathVariable("empId") int empId){
+    public Employee getEmp(@PathVariable("empId") Integer empId){
         return service.getEmp(empId);
     }
 
     // To add a new employee
     @PostMapping("emp")
-    public String addEmp(@RequestBody Employee emp){
+    public String addEmp(@Valid @RequestBody Employee emp){
         if(service.addEmp(emp)) return "Employee added";
         return "Employee with same EmpId already present";
     }
 
     // To update an employee
     @PutMapping("emp")
-    public String updateEmp(@RequestBody Employee emp){
+    public String updateEmp(@Valid @RequestBody Employee emp){
         if(service.updateEmp(emp)){
             return "Employee updated";
         }

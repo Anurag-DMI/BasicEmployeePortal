@@ -21,7 +21,7 @@ public class EmployeeService {
     // To get employee using EmpID
     public Employee getEmp(int empId) {
 //        return repo.getEmp(empId);
-        return repo.findById(empId).orElse(new Employee());
+        return repo.findById(empId).orElse(null);
     }
 
     // To add employee
