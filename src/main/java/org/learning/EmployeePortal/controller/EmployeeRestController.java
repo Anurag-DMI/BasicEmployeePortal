@@ -1,5 +1,6 @@
 package org.learning.EmployeePortal.controller;
 
+import org.learning.EmployeePortal.exception.GlobalExceptionHandler;
 import org.learning.EmployeePortal.model.Employee;
 import org.learning.EmployeePortal.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,11 @@ public class EmployeeRestController {
     @GetMapping("allemp")
     public List<Employee> getAllEmp(){
         System.out.println("Get a list of all employees");
-        return service.getAllEmp();
+        try{
+            return service.getAllEmp() ;
+        } catch (GlobalExceptionHandler e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // To get employee using empId
@@ -30,26 +35,19 @@ public class EmployeeRestController {
     // To add a new employee
     @PostMapping("emp")
     public String addEmp(@Valid @RequestBody Employee emp){
-        if(service.addEmp(emp)) return "Employee added";
-        return "Employee with same EmpId already present";
+        return service.addEmp(emp);
     }
 
     // To update an employee
     @PutMapping("emp")
     public String updateEmp(@Valid @RequestBody Employee emp){
-        if(service.updateEmp(emp)){
-            return "Employee updated";
-        }
-        return "Employee not found/Error occurred";
+        return service.updateEmp(emp);
     }
 
 
     // To delete an employee
     @DeleteMapping("emp/{empId}")
     public String deleteEmp(@PathVariable("empId") int empId){
-        if(service.deleteEmp(empId)){
-            return "Employee deleted";
-        }
-        return "Employee not found";
+        return service.deleteEmp(empId);
     }
 }

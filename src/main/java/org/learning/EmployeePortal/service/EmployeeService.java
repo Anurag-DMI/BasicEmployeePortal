@@ -1,5 +1,6 @@
 package org.learning.EmployeePortal.service;
 
+import org.learning.EmployeePortal.exception.GlobalExceptionHandler;
 import org.learning.EmployeePortal.model.Employee;
 import org.learning.EmployeePortal.repository.EmployeeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ public class EmployeeService {
     private EmployeeRepo repo;
 
     // To get list of all employees
-    public List<Employee> getAllEmp() {
+    public List<Employee> getAllEmp() throws GlobalExceptionHandler {
 //        return repo.getAllEmp();
         return repo.findAll();
     }
@@ -25,30 +26,52 @@ public class EmployeeService {
     }
 
     // To add employee
-    public boolean addEmp(Employee emp) {
+    public String addEmp(Employee emp) {
 //        return repo.addEmp(emp);
-        if(repo.existsById(emp.getEmpId())) return false;
-        repo.save(emp);
-        return true;
+        if(repo.existsById(emp.getEmpId())) return "Employee with same empId already exists";
+        String response = validate(emp);
+        if(response.equals("true")) {
+            repo.save(emp);
+            return "Employee added successfully";
+        }
+        return response;
+    }
+
+    public String validate(Employee emp) {
+        String [] departments = {"HR", "IT", "CS", "ST"};
+        for(String department: departments){
+            if(department.equals(emp.getDepartment())) {
+                int salary = emp.getSalary();
+                if(salary <= 5000000){
+                    return "true";
+                }
+                return "Salary should be less than 50,00,000";
+            }
+        }
+        return "Wrong department entry";
     }
 
     // To update an employee data
-    public boolean updateEmp(Employee emp) {
+    public String updateEmp(Employee emp) {
 //        return repo.updateEmp(emp);
         if(repo.existsById(emp.getEmpId())) {
-            repo.save(emp);
-            return true;
+            String response = validate(emp);
+            if(response.equals("true")) {
+                repo.save(emp);
+                return "Employee updated successfully";
+            }
+            return response;
         }
-        return false;
+        return "Employee with this empId does not exists";
     }
 
     // To delete an employee data
-    public boolean deleteEmp(int empId) {
+    public String deleteEmp(int empId)  {
 //        return repo.deleteEmp(empId);
         if(repo.existsById(empId)) {
             repo.deleteById(empId);
-            return true;
+            return "Employee deleted successfully";
         }
-        return false;
+        return "Employee with this empId does not exist";
     }
 }
